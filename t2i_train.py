@@ -17,6 +17,7 @@ import PIL
 from PIL import Image
 from PIL import ImageDraw, ImageFont
 import numpy as np
+import tqdm
 import torch
 import torch.nn.functional as F
 import torchvision.transforms as T
@@ -57,7 +58,7 @@ for epoch in range(num_epochs):
     model.train()
     total_loss = 0
     num_batches = 0
-    for (a,b,c,d) in tqdm(dataloader):
+    for (images, texts) in tqdm(enumerate(dataloader)):
         """
         DATA SETUP HERE
         """
