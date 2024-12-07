@@ -20,8 +20,11 @@ import numpy as np
 import tqdm
 import torch
 import torch.nn.functional as F
+import torch.optim as optim
 import torchvision.transforms as T
 import torchvision.transforms.functional as TF
+import torchvision.datasets as datasets
+from torch.utils.data import Dataset, DataLoader
 from IPython.display import display, display_markdown
 
 # Setup device
@@ -41,9 +44,10 @@ model.to(device)
 """
 TODO: FIX THIS DATALOADER TO WORK AS WE WANT
 """
-dataset = MemeCapDataset(json_path="../data/memes-trainval-filtered.json",
-                         image_path="../data/images/images-trainval-filtered/",
-                         ocr_path="./memes-trainval-ocr.json")
+dataset = datasets.CocoCaptions(root = 'dir where images are',
+                                annFile = 'json annotation file',
+                                transform=T.PILToTensor())
+
 dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
 # Setup optimizer
