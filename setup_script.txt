@@ -1,0 +1,5 @@
+mkdir -p logs/vqgan_gumbel_f8/checkpoints
+mkdir -p logs/vqgan_gumbel_f8/configs
+wget 'https://heibox.uni-heidelberg.de/f/34a747d5765840b5a99d/?dl=1' -O'logs/vqgan_gumbel_f8/checkpoints/last.ckpt'
+wget 'https://heibox.uni-heidelberg.de/f/b24d14998a8d4f19a34f/?dl=1' -O 'logs/vqgan_gumbel_f8/configs/model.yaml'
+pip install omegaconf>=2.0.0 pytorch-lightning>=1.0.8 einops>=0.3.0
