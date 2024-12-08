@@ -7,21 +7,16 @@ Author: Nicholas Mesa-Cucalon
 # Perform Imports
 import sys
 sys.path.append(".")
-import yaml
-from omegaconf import OmegaConf
-from taming.models.vqgan import VQModel, GumbelVQ
-import io
-import os
-import requests
-import PIL
-from PIL import Image
-from PIL import ImageDraw, ImageFont
 import numpy as np
 import torch
 import torch.nn.functional as F
 import torchvision.transforms as T
+import torchvision.datasets as datasets
 import torchvision.transforms.functional as TF
-from IPython.display import display, display_markdown
+import torch.optim as optim
+from tqdm import tqdm
+from torch.utils.data import Dataset, DataLoader
+from t2i_model import T2IEncoderInput
 
 # Setup device
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -37,19 +32,22 @@ chkpt_path = "logs/vqgan_gumbel_f8/checkpoints/last.ckpt"
 model = T2IEncoderInput(d_proj, d_hidden, config_path, chkpt_path, True)
 model.to(device)
 
-"""
-TODO: FIX THIS DATALOADER TO WORK AS WE WANT
-"""
-dataset = MemeCapDataset(json_path="../data/memes-trainval-filtered.json",
-                         image_path="../data/images/images-trainval-filtered/",
-                         ocr_path="./memes-trainval-ocr.json")
+
+# Initialize dataloader
+dataset = datasets.CocoCaptions(root = '/data/coco_annotations_100/val2017',
+                                annFile = '/data/annotations/stuff_val2017.json',
+                                transform=T.PILToTensor())
+
 dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
 # Setup optimizer
 optimizer = optim.Adam(model.parameters(), lr=1e-5)
 
-# Setup Loss Function
-loss_fn = torch.nn.MSE()
+# Setup optimizer
+optimizer = optim.Adam(model.parameters(), lr=1e-5)
+
+# Setup L2 Distance Norm Function
+loss_fn = lambda x,y: (torch.linalg.norm(x) - torch.linalg.norm(y)) ** 2
 
 # Training loop
 num_epochs = 1
@@ -57,28 +55,23 @@ for epoch in range(num_epochs):
     model.train()
     total_loss = 0
     num_batches = 0
-    for (a,b,c,d) in tqdm(dataloader):
+    for (txt, img) in tqdm(dataloader):
         """
         DATA SETUP HERE
         """
+        print(txt)
+        print(img)
+        exit(0)
+
         # Forward pass
         optimizer.zero_grad()
 
         # Pass it through our model and get the logits
-        _, logits = model(x = texts, y = images, prompt = prompts, num_logits = 0)
+        txt_to_img = model(x = txt)
 
-        # Calculate loss (assuming LLaMA is generating tokens and using CrossEntropyLoss)
-        tokens = tokens[:,1:].contiguous()    # Model does not predict the first token, so we remove it
-        logits = logits[:,:-1,:].contiguous() # No label for the token that follows the full input seq, so remove it
-
-        logits = logits.view(-1, logits.shape[-1]) # Shape -> [b * (seq_len), d_vocab]
-        tokens = tokens.view(-1) # Shape -> [b * seq_len]
-
-        # Create padding masks so we don't learn to the padding tokens
-        mask = (tokens != pad_token_id)
-        logits, tokens = logits[mask], tokens[mask]
-
-        # Compute cross entropy loss
+        """
+        TODO: Compute L2 Loss Fn
+        """
         loss   = loss_fn(logits, tokens.to(device))
 
         # Backpropagation and optimization
