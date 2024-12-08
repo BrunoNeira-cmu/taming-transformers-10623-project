@@ -1,0 +1,19 @@
+wget http://images.cocodataset.org/zips/train2017.zip
+wget http://images.cocodataset.org/zips/val2017.zip
+wget http://images.cocodataset.org/annotations/annotations_trainval2017.zip
+
+mkdir ./content
+cd content
+mkdir train2017
+mkdir val2017
+mkdir annotations
+
+cd ~/taming-transformers-10623-project/coco_data
+unzip train2017.zip -d ./content/train2017
+unzip val2017.zip -d ./content/val2017
+unzip annotations_trainval2017.zip -d ./content/annotations
+
+ls ./content/train2017 | head
+ls ./content/val2017 | head
+ls ./content/annotations
+rm train2017.zip val2017.zip annotations_trainval2017.zip
