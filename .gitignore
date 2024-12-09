@@ -1,3 +1,4 @@
 /coco_data
 /logs/
 /encoder_input.pth
+/embedding_input.pth
