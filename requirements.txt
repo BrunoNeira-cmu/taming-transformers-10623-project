@@ -3,3 +3,4 @@ transformers
 pytorch_lightning
 omegaconf
 einops
+pycocotools

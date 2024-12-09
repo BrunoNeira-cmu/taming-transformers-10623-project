@@ -53,7 +53,7 @@ class T2IEncoderInput(nn.Module):
     def __init__(self, d_proj : int,
                        res_h_dim : int,
                        config_path : str,
-                       chkpt_path : str,
+                       ckpt_path : str,
                        is_gumbel : bool,
     ):
         super(T2IEncoderInput, self).__init__()

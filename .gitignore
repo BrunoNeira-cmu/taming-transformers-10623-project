@@ -1,1 +1,3 @@
-/coco_full_data
+/coco_data
+/logs/
+/encoder_input.pth
