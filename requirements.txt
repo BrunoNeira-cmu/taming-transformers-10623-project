@@ -4,3 +4,4 @@ pytorch_lightning
 omegaconf
 einops
 pycocotools
+peft

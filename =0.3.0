@@ -1,25 +1,61 @@
 Defaulting to user installation because normal site-packages is not writeable
-Requirement already satisfied: omegaconf in /home/ubuntu/.local/lib/python3.10/site-packages (2.3.0)
-Requirement already satisfied: pytorch-lightning in /home/ubuntu/.local/lib/python3.10/site-packages (2.4.0)
-Requirement already satisfied: einops in /home/ubuntu/.local/lib/python3.10/site-packages (0.8.0)
+Collecting omegaconf
+  Downloading omegaconf-2.3.0-py3-none-any.whl (79 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 79.5/79.5 KB 2.8 MB/s eta 0:00:00
+Collecting pytorch-lightning
+  Downloading pytorch_lightning-2.4.0-py3-none-any.whl (815 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 815.2/815.2 KB 48.3 MB/s eta 0:00:00
+Collecting einops
+  Downloading einops-0.8.0-py3-none-any.whl (43 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 43.2/43.2 KB 14.5 MB/s eta 0:00:00
+Collecting antlr4-python3-runtime==4.9.*
+  Downloading antlr4-python3-runtime-4.9.3.tar.gz (117 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 117.0/117.0 KB 31.6 MB/s eta 0:00:00
+  Preparing metadata (setup.py): started
+  Preparing metadata (setup.py): finished with status 'done'
 Requirement already satisfied: PyYAML>=5.1.0 in /usr/lib/python3/dist-packages (from omegaconf) (5.4.1)
-Requirement already satisfied: antlr4-python3-runtime==4.9.* in /home/ubuntu/.local/lib/python3.10/site-packages (from omegaconf) (4.9.3)
-Requirement already satisfied: packaging>=20.0 in /usr/lib/python3/dist-packages (from pytorch-lightning) (21.3)
+Collecting torchmetrics>=0.7.0
+  Downloading torchmetrics-1.6.0-py3-none-any.whl (926 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 926.4/926.4 KB 82.9 MB/s eta 0:00:00
 Requirement already satisfied: typing-extensions>=4.4.0 in /usr/lib/python3/dist-packages (from pytorch-lightning) (4.9.0)
-Requirement already satisfied: lightning-utilities>=0.10.0 in /home/ubuntu/.local/lib/python3.10/site-packages (from pytorch-lightning) (0.11.9)
+Collecting lightning-utilities>=0.10.0
+  Downloading lightning_utilities-0.11.9-py3-none-any.whl (28 kB)
 Requirement already satisfied: fsspec[http]>=2022.5.0 in /usr/lib/python3/dist-packages (from pytorch-lightning) (2024.3.1)
-Requirement already satisfied: tqdm>=4.57.0 in /home/ubuntu/.local/lib/python3.10/site-packages (from pytorch-lightning) (4.67.1)
-Requirement already satisfied: torchmetrics>=0.7.0 in /home/ubuntu/.local/lib/python3.10/site-packages (from pytorch-lightning) (1.6.0)
 Requirement already satisfied: torch>=2.1.0 in /usr/lib/python3/dist-packages (from pytorch-lightning) (2.4.1)
-Requirement already satisfied: aiohttp!=4.0.0a0,!=4.0.0a1 in /home/ubuntu/.local/lib/python3.10/site-packages (from fsspec[http]>=2022.5.0->pytorch-lightning) (3.11.10)
+Requirement already satisfied: packaging>=20.0 in /usr/lib/python3/dist-packages (from pytorch-lightning) (21.3)
+Collecting tqdm>=4.57.0
+  Downloading tqdm-4.67.1-py3-none-any.whl (78 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 78.5/78.5 KB 22.3 MB/s eta 0:00:00
+Collecting aiohttp!=4.0.0a0,!=4.0.0a1
+  Downloading aiohttp-3.11.10-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (1.6 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.6/1.6 MB 85.2 MB/s eta 0:00:00
 Requirement already satisfied: setuptools in /usr/lib/python3/dist-packages (from lightning-utilities>=0.10.0->pytorch-lightning) (59.6.0)
 Requirement already satisfied: numpy>1.20.0 in /usr/lib/python3/dist-packages (from torchmetrics>=0.7.0->pytorch-lightning) (1.21.5)
-Requirement already satisfied: async-timeout<6.0,>=4.0 in /home/ubuntu/.local/lib/python3.10/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]>=2022.5.0->pytorch-lightning) (5.0.1)
-Requirement already satisfied: aiosignal>=1.1.2 in /home/ubuntu/.local/lib/python3.10/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]>=2022.5.0->pytorch-lightning) (1.3.1)
-Requirement already satisfied: frozenlist>=1.1.1 in /home/ubuntu/.local/lib/python3.10/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]>=2022.5.0->pytorch-lightning) (1.5.0)
-Requirement already satisfied: propcache>=0.2.0 in /home/ubuntu/.local/lib/python3.10/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]>=2022.5.0->pytorch-lightning) (0.2.1)
-Requirement already satisfied: aiohappyeyeballs>=2.3.0 in /home/ubuntu/.local/lib/python3.10/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]>=2022.5.0->pytorch-lightning) (2.4.4)
+Collecting multidict<7.0,>=4.5
+  Downloading multidict-6.1.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (124 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 124.6/124.6 KB 33.0 MB/s eta 0:00:00
+Collecting async-timeout<6.0,>=4.0
+  Downloading async_timeout-5.0.1-py3-none-any.whl (6.2 kB)
+Collecting propcache>=0.2.0
+  Downloading propcache-0.2.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (205 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 205.1/205.1 KB 46.0 MB/s eta 0:00:00
 Requirement already satisfied: attrs>=17.3.0 in /usr/lib/python3/dist-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]>=2022.5.0->pytorch-lightning) (21.2.0)
-Requirement already satisfied: yarl<2.0,>=1.17.0 in /home/ubuntu/.local/lib/python3.10/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]>=2022.5.0->pytorch-lightning) (1.18.3)
-Requirement already satisfied: multidict<7.0,>=4.5 in /home/ubuntu/.local/lib/python3.10/site-packages (from aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]>=2022.5.0->pytorch-lightning) (6.1.0)
+Collecting aiohappyeyeballs>=2.3.0
+  Downloading aiohappyeyeballs-2.4.4-py3-none-any.whl (14 kB)
+Collecting frozenlist>=1.1.1
+  Downloading frozenlist-1.5.0-cp310-cp310-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl (241 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 241.9/241.9 KB 51.8 MB/s eta 0:00:00
+Collecting yarl<2.0,>=1.17.0
+  Downloading yarl-1.18.3-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (319 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 319.7/319.7 KB 57.8 MB/s eta 0:00:00
+Collecting aiosignal>=1.1.2
+  Downloading aiosignal-1.3.1-py3-none-any.whl (7.6 kB)
 Requirement already satisfied: idna>=2.0 in /usr/lib/python3/dist-packages (from yarl<2.0,>=1.17.0->aiohttp!=4.0.0a0,!=4.0.0a1->fsspec[http]>=2022.5.0->pytorch-lightning) (3.3)
+Building wheels for collected packages: antlr4-python3-runtime
+  Building wheel for antlr4-python3-runtime (setup.py): started
+  Building wheel for antlr4-python3-runtime (setup.py): finished with status 'done'
+  Created wheel for antlr4-python3-runtime: filename=antlr4_python3_runtime-4.9.3-py3-none-any.whl size=144575 sha256=8d78ee8246730c2e5841248516ccce7749dc91af7675349600fe7d4a3317ca93
+  Stored in directory: /home/ubuntu/.cache/pip/wheels/12/93/dd/1f6a127edc45659556564c5730f6d4e300888f4bca2d4c5a88
+Successfully built antlr4-python3-runtime
+Installing collected packages: antlr4-python3-runtime, tqdm, propcache, omegaconf, multidict, lightning-utilities, frozenlist, einops, async-timeout, aiohappyeyeballs, yarl, torchmetrics, aiosignal, aiohttp, pytorch-lightning
+Successfully installed aiohappyeyeballs-2.4.4 aiohttp-3.11.10 aiosignal-1.3.1 antlr4-python3-runtime-4.9.3 async-timeout-5.0.1 einops-0.8.0 frozenlist-1.5.0 lightning-utilities-0.11.9 multidict-6.1.0 omegaconf-2.3.0 propcache-0.2.1 pytorch-lightning-2.4.0 torchmetrics-1.6.0 tqdm-4.67.1 yarl-1.18.3

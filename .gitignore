@@ -2,3 +2,5 @@
 /logs/
 /encoder_input.pth
 /embedding_input.pth
+/clip_vqvae.pth
+/embedding_forcing.pth

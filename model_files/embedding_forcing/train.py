@@ -1,5 +1,5 @@
 """
-Text 2 Image with VQGAN Code
+Text 2 Image Training for Embedding Forcing
 Author: Nicholas Mesa-Cucalon
 10-623 Generative AI
 """
@@ -19,36 +19,32 @@ import torchvision.transforms.functional as TF
 import torch.optim as optim
 from tqdm import tqdm
 from torch.utils.data import Dataset, DataLoader
-from t2i_model import T2IEncoderInput
+from embedding_forcing_t2i import T2IEmbeddingForcing
 from PIL import Image
-
-# Define helper functions
-def normalize_output(x):
-  x = torch.clamp(x, -1., 1.)
-  x = (x + 1.)/2.
-  return x
 
 # Setup device
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 # Initialize Variables
-batch_size  = 256
+batch_size  = 32
 d_proj      = 512
-d_hidden    = 32
+d_embd      = 32
+num_chans   = 256
+d_crop      = 256
+lr          = 2e-4
 
 # Initialize model
 config_path = "logs/vqgan_gumbel_f8/configs/model.yaml"
-chkpt_path = "logs/vqgan_gumbel_f8/checkpoints/last.ckpt"
-model = T2IEncoderInput(d_proj, d_hidden, config_path, chkpt_path, True)
-model_path = "embedding_input.pth"
+chkpt_path  = "logs/vqgan_gumbel_f8/checkpoints/last.ckpt"
+model       = T2IEmbeddingForcing(d_proj, d_embd, num_chans, config_path, chkpt_path, True)
+model_path  = "embedding_forcing.pth"
 # model.load_state_dict(torch.load(model_path))
 model.to(device)
-
 
 # Initialize dataloader
 transform = T.Compose([
     T.PILToTensor(), # Convert all PIL objects to tensors
-    T.Resize((d_hidden, d_hidden)),  # Resize all images to d_h x d_h
+    T.Resize((d_crop, d_crop)),  # Resize all images to d_crop x d_crop
     T.ConvertImageDtype(torch.float),
 ])
 
@@ -76,10 +72,21 @@ dataset = datasets.CocoCaptions(root = 'coco_data/content/train2017/train2017',
 dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True, collate_fn = custom_collate_fn)
 
 # Setup optimizer
-optimizer = optim.AdamW(model.parameters(), lr=1e-4)
+optimizer = optim.AdamW(model.parameters(), lr=lr)
 
-# Setup MSE Loss
-loss_fn = nn.MSELoss()
+# Setup loss function
+"""
+Source: https://github.com/huggingface/transformers/blob/v4.47.0/src/transformers/models/clip/modeling_clip.py#L65
+"""
+def contrastive_loss(logits):
+    return F.cross_entropy(logits, torch.arange(len(logits), device=logits.device))
+
+def loss_fn(x,y):
+    logit_scale = model.logit_scale.exp().to(device)
+    txt_logits = logit_scale * torch.matmul(x, y.t())
+    img_logits = txt_logits.t()
+    l_contrastive = (contrastive_loss(txt_logits) + contrastive_loss(img_logits)) / 2.0
+    return l_contrastive
 
 # Training loop
 num_epochs = 2
@@ -90,16 +97,16 @@ for epoch in range(num_epochs):
     for (img, txt) in tqdm(dataloader):
         # Convert caption tuple options into a list
         txt = [t[0] for t in txt]
+        img = img.to(device)
 
         # Forward pass
         optimizer.zero_grad()
 
-        # Pass it through our model and get the logits
-        txt_to_img = model(x = txt)
-        txt_to_img = torch.stack([normalize_output(t) for t in txt_to_img], dim = 0)
+        # Pass through model
+        z_txt, z_img = model(txt,img)
 
         # Compute loss
-        loss   = loss_fn(txt_to_img, img.to(device))
+        loss = loss_fn(z_txt,z_img)
 
         # Backpropagation and optimization
         loss.backward()
@@ -109,22 +116,19 @@ for epoch in range(num_epochs):
         total_loss += loss.item()
 
         # Clear cache if necessary
-        # print(f"GPU Memory in Use = {torch.cuda.memory_allocated() / 1024**3}")
         torch.cuda.empty_cache()
+        # Delete loss item to save on space
         del loss
-
-        # Print current loss for this batch
-        # print(f"Loss for this batch: {loss.item()}")
 
         # Increment number of batches seen
         num_batches += 1
 
-        # Make a checkpoint every 100 batches
-        if (num_batches % 100 == 0):
+        # Make a checkpoint every 3000 batches
+        if (num_batches % 3000 == 0):
             torch.save(model.state_dict(), model_path)
 
-        # Print the average loss every 10 batches
-        if (num_batches % 10 == 0):
+        # Print the average loss every 100 batches
+        if (num_batches % 100 == 0):
             print(f"Loss after {num_batches} batches: {total_loss / num_batches}")
 
     print(f"Total Loss: {total_loss/len(dataloader)}")
