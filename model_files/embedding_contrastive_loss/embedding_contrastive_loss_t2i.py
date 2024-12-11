@@ -1,5 +1,5 @@
 """
-Text 2 Image via Encoder Output Embedding Forcing
+Text 2 Image via Encoder Output with Contrastive Loss
 Authors: Nicholas Mesa-Cucalon, Bruno Neira, Deon D Kouatchou-Ngongang
 10-623 Generative AI
 """
@@ -64,7 +64,7 @@ class Adapter(nn.Module):
         return x
 
 """
-Model 3: Forcing Embeddings Together
+Model 3: Contrastive Loss Embedding Input
 """
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 class T2IEmbeddingForcing(nn.Module):

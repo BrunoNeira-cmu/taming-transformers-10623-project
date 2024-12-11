@@ -1,5 +1,5 @@
 """
-Text 2 Image Training for Embedding Forcing
+Text 2 Image Training for Encoder Input
 Author: Nicholas Mesa-Cucalon
 10-623 Generative AI
 """
@@ -19,25 +19,25 @@ import torchvision.transforms.functional as TF
 import torch.optim as optim
 from tqdm import tqdm
 from torch.utils.data import Dataset, DataLoader
-from embedding_forcing_t2i import T2IEmbeddingForcing
+from encoder_in_t2i import T2IEncoderInput
 from PIL import Image
 
 # Setup device
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 # Initialize Variables
-batch_size  = 32
+batch_size  = 4
 d_proj      = 512
-d_embd      = 32
-num_chans   = 256
+d_embd      = 256
+num_chans   = 3
 d_crop      = 256
 lr          = 2e-4
 
 # Initialize model
 config_path = "logs/vqgan_gumbel_f8/configs/model.yaml"
 chkpt_path  = "logs/vqgan_gumbel_f8/checkpoints/last.ckpt"
-model       = T2IEmbeddingForcing(d_proj, d_embd, num_chans, config_path, chkpt_path, True)
-model_path  = "embedding_forcing.pth"
+model       = T2IEncoderInput(d_proj, d_embd, num_chans, config_path, chkpt_path, True)
+model_path  = "encoder_input.pth"
 # model.load_state_dict(torch.load(model_path))
 model.to(device)
 
@@ -75,21 +75,21 @@ dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True, collate_fn
 optimizer = optim.AdamW(model.parameters(), lr=lr)
 
 # Setup loss function
-"""
-Source: https://github.com/huggingface/transformers/blob/v4.47.0/src/transformers/models/clip/modeling_clip.py#L65
-"""
-def contrastive_loss(logits):
-    return F.cross_entropy(logits, torch.arange(len(logits), device=logits.device))
-
-def loss_fn(x,y):
-    logit_scale = model.logit_scale.exp().to(device)
-    txt_logits = logit_scale * torch.matmul(x, y.t())
-    img_logits = txt_logits.t()
-    l_contrastive = (contrastive_loss(txt_logits) + contrastive_loss(img_logits)) / 2.0
-    return l_contrastive
+mse_loss = nn.MSELoss()
+kl_loss  = nn.KLDivLoss(reduction="batchmean")
+def loss_fn(t2i_img,img):
+    # Compute MSE Loss between gt image and generated img
+    l_mse = mse_loss(t2i_img,img)
+    # Compute KL Loss between gt image and generated img
+    t2i_img = t2i_img.reshape(batch_size,3,-1)
+    img = img.reshape(batch_size,3,-1)
+    t2i_img = F.log_softmax(t2i_img,dim=-1)
+    img = F.softmax(img,dim=-1)
+    l_kl = kl_loss(t2i_img,img)
+    return l_mse + l_kl
 
 # Training loop
-num_epochs = 2
+num_epochs = 1
 for epoch in range(num_epochs):
     model.train()
     total_loss = 0
@@ -103,10 +103,10 @@ for epoch in range(num_epochs):
         optimizer.zero_grad()
 
         # Pass through model
-        z_txt, z_img = model(txt,img)
+        t2i_img = model(txt)
 
         # Compute loss
-        loss = loss_fn(z_txt,z_img)
+        loss = loss_fn(t2i_img,img)
 
         # Backpropagation and optimization
         loss.backward()

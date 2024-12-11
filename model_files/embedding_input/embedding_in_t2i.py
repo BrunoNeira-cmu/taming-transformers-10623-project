@@ -8,7 +8,9 @@ Authors: Nicholas Mesa-Cucalon, Bruno Neira, Deon D Kouatchou-Ngongang
 Imports
 """
 import sys
-sys.path.append(".")
+import os
+os.chdir("/home/ubuntu/taming-transformers-10623-project")
+sys.path.append(os.getcwd())
 import yaml
 from taming.models.vqgan import VQModel, GumbelVQ
 import numpy as np
@@ -46,6 +48,7 @@ def load_vqgan(config, ckpt_path=None, is_gumbel=False):
 """
 Model 2: Embedding Input
 """
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 class T2IEmbeddingInput(nn.Module):
     def __init__(self, d_proj : int,
                        d_embd : int,
@@ -100,5 +103,5 @@ class T2IEmbeddingInput(nn.Module):
         z = self.encode_text(x)
         # Project into the embedding space
         cnn_shape = (b,self.num_channels,self.d_embd,self.d_embd)
-        z = self.clip2cnn(z).reshape(cnn_shape)
+        z = self.grounding_layer(z).reshape(cnn_shape)
         return self.vqgan.decode(z)
