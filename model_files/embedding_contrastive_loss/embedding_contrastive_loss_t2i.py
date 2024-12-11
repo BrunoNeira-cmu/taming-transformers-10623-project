@@ -64,7 +64,7 @@ class Adapter(nn.Module):
         return x
 
 """
-Model 3: Contrastive Loss Embedding Input
+Model 4: Contrastive Loss Embedding Input
 """
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 class T2IEmbeddingForcing(nn.Module):

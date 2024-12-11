@@ -1,6 +1,6 @@
 """
 Text 2 Image with VQGAN Model
-Author: Nicholas Mesa-Cucalon
+Authors: Nicholas Mesa-Cucalon, Bruno Neira, Deon D Kouatchou-Ngongang
 10-623 Generative AI
 """
 

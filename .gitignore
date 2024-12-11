@@ -4,3 +4,4 @@
 /embedding_input.pth
 /clip_vqvae.pth
 /embedding_forcing.pth
+/fusion_input.pth

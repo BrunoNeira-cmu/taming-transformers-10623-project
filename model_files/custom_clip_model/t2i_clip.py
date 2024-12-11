@@ -1,8 +1,11 @@
 """
 Text 2 Image with CLIP and VQGAN Arch
-Author: Nicholas Mesa-Cucalon
+Authors: Nicholas Mesa-Cucalon, Bruno Neira, Deon D Kouatchou-Ngongang
 10-623 Generative AI
 """
+
+# This model didn't originally fit on a GPU, so we abandoned it, though we considered training from
+# scratch. Future Work maybe?
 
 """
 Imports

@@ -46,7 +46,7 @@ def load_vqgan(config, ckpt_path=None, is_gumbel=False):
   return model.eval()
 
 """
-Model 2: Embedding Input
+Model 3: Embedding Input
 """
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 class T2IEmbeddingInput(nn.Module):
